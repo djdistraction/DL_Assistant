@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DL Assistant - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .btn-secondary {
+            background: #2196F3;
+        }
+        
+        .btn-secondary:hover {
+            background: #0b7dda;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-box {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .file-list {
+            list-style: none;
+        }
+        
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗂️ DL Assistant Dashboard</h1>
+            <p class="subtitle">Configure your download folder management assistant</p>
+        </header>
+        
+        <div id="statusMessage"></div>
+        
+        <div class="section">
+            <h2>Folder Configuration</h2>
+            <div class="config-grid">
+                <div class="form-group">
+                    <label for="downloads_folder">Downloads Folder</label>
+                    <input type="text" id="downloads_folder" value="{{ config.downloads_folder }}">
+                </div>
+                <div class="form-group">
+                    <label for="quarantine_folder">Quarantine Folder</label>
+                    <input type="text" id="quarantine_folder" value="{{ config.quarantine_folder }}">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Monitoring Settings</h2>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="monitoring_enabled" {% if config.monitoring.enabled %}checked{% endif %}>
+                    Enable monitoring
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="ignore_hidden" {% if config.monitoring.ignore_hidden %}checked{% endif %}>
+                    Ignore hidden files
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="ignore_temp" {% if config.monitoring.ignore_temp %}checked{% endif %}>
+                    Ignore temporary files
+                </label>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Duplicate Detection</h2>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="duplicate_enabled" {% if config.duplicate_detection.enabled %}checked{% endif %}>
+                    Enable duplicate detection
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="keep_newest" {% if config.duplicate_detection.keep_newest %}checked{% endif %}>
+                    Keep newest file when duplicates found
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="compare_method">Compare Method</label>
+                <select id="compare_method">
+                    <option value="hash" {% if config.duplicate_detection.compare_method == 'hash' %}selected{% endif %}>Hash</option>
+                    <option value="size" {% if config.duplicate_detection.compare_method == 'size' %}selected{% endif %}>Size</option>
+                    <option value="both" {% if config.duplicate_detection.compare_method == 'both' %}selected{% endif %}>Both</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Naming Patterns</h2>
+            <div class="info-box">
+                <strong>Available placeholders:</strong> {date}, {time}, {title}, {artist}, {album}, {year}, {filename}, {ext}
+            </div>
+            <br>
+            <div class="config-grid">
+                <div class="form-group">
+                    <label for="pattern_images">Images</label>
+                    <input type="text" id="pattern_images" value="{{ config.naming_patterns.images }}">
+                </div>
+                <div class="form-group">
+                    <label for="pattern_documents">Documents</label>
+                    <input type="text" id="pattern_documents" value="{{ config.naming_patterns.documents }}">
+                </div>
+                <div class="form-group">
+                    <label for="pattern_music">Music</label>
+                    <input type="text" id="pattern_music" value="{{ config.naming_patterns.music }}">
+                </div>
+                <div class="form-group">
+                    <label for="pattern_videos">Videos</label>
+                    <input type="text" id="pattern_videos" value="{{ config.naming_patterns.videos }}">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Quarantine Files</h2>
+            <div id="quarantineList">Loading...</div>
+        </div>
+        
+        <div class="section">
+            <button onclick="saveConfig()">Save Configuration</button>
+            <button class="btn-secondary" onclick="refreshQuarantine()">Refresh Quarantine</button>
+        </div>
+    </div>
+    
+    <script>
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = `<div class="section status ${isError ? 'error' : 'success'}">${message}</div>`;
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 3000);
+        }
+        
+        function saveConfig() {
+            const config = {
+                downloads_folder: document.getElementById('downloads_folder').value,
+                quarantine_folder: document.getElementById('quarantine_folder').value,
+                monitoring: {
+                    enabled: document.getElementById('monitoring_enabled').checked,
+                    ignore_hidden: document.getElementById('ignore_hidden').checked,
+                    ignore_temp: document.getElementById('ignore_temp').checked
+                },
+                duplicate_detection: {
+                    enabled: document.getElementById('duplicate_enabled').checked,
+                    keep_newest: document.getElementById('keep_newest').checked,
+                    compare_method: document.getElementById('compare_method').value
+                },
+                naming_patterns: {
+                    images: document.getElementById('pattern_images').value,
+                    documents: document.getElementById('pattern_documents').value,
+                    music: document.getElementById('pattern_music').value,
+                    videos: document.getElementById('pattern_videos').value
+                }
+            };
+            
+            fetch('/api/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showStatus('Configuration saved successfully!');
+                } else {
+                    showStatus('Error: ' + data.error, true);
+                }
+            })
+            .catch(error => {
+                showStatus('Error saving configuration: ' + error, true);
+            });
+        }
+        
+        function refreshQuarantine() {
+            const listDiv = document.getElementById('quarantineList');
+            listDiv.innerHTML = 'Loading...';
+            
+            fetch('/api/folders/quarantine')
+            .then(response => response.json())
+            .then(data => {
+                if (data.files.length === 0) {
+                    listDiv.innerHTML = '<p>No files in quarantine.</p>';
+                } else {
+                    let html = '<ul class="file-list">';
+                    data.files.forEach(file => {
+                        const date = new Date(file.modified * 1000).toLocaleString();
+                        const size = (file.size / 1024).toFixed(2) + ' KB';
+                        html += `<li class="file-item">
+                            <span><strong>${file.name}</strong> - ${size}</span>
+                            <span>${date}</span>
+                        </li>`;
+                    });
+                    html += '</ul>';
+                    listDiv.innerHTML = html;
+                }
+            })
+            .catch(error => {
+                listDiv.innerHTML = '<p>Error loading quarantine files.</p>';
+            });
+        }
+        
+        // Load quarantine files on page load
+        refreshQuarantine();
+    </script>
+</body>
+</html>
