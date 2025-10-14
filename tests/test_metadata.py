@@ -18,6 +18,7 @@ class TestMetadataExtractor(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures"""
         self.test_dir = tempfile.mkdtemp()
+        self.extractor = MetadataExtractor(use_vision=False)
     
     def tearDown(self):
         """Clean up test fixtures"""
@@ -31,7 +32,7 @@ class TestMetadataExtractor(unittest.TestCase):
             f.write('test content')
         
         # Extract metadata
-        metadata = MetadataExtractor.extract(test_file)
+        metadata = self.extractor.extract(test_file)
         
         # Check basic fields
         self.assertEqual(metadata['filename'], 'test')
@@ -51,7 +52,7 @@ class TestMetadataExtractor(unittest.TestCase):
             with open(test_file, 'w') as f:
                 f.write('dummy content')
             
-            metadata = MetadataExtractor.extract(test_file)
+            metadata = self.extractor.extract(test_file)
             self.assertEqual(metadata['ext'], ext)
 
 
