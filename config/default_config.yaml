@@ -5,8 +5,12 @@
 downloads_folder: "~/Downloads"
 quarantine_folder: "~/Downloads/Quarantine"
 
+# Vision AI settings
+vision_enabled: true  # Enable AI vision for intelligent file naming (requires OPENAI_API_KEY)
+
 # File naming patterns
 # Available placeholders: {date}, {time}, {title}, {artist}, {album}, {year}, {filename}, {ext}
+# Additional for videos: {content_rating}, {video_type}
 naming_patterns:
   images: "{date}_{filename}.{ext}"
   documents: "{date}_{title}.{ext}"

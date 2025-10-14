@@ -25,12 +25,28 @@ try:
 except ImportError:
     HAS_PYPDF2 = False
 
+try:
+    from .vision import VisionAnalyzer
+    HAS_VISION = True
+except ImportError:
+    HAS_VISION = False
+
 
 class MetadataExtractor:
     """Extract metadata from various file types"""
     
-    @staticmethod
-    def extract(file_path: str) -> Dict[str, Any]:
+    def __init__(self, use_vision: bool = True):
+        """
+        Initialize metadata extractor
+        
+        Args:
+            use_vision: Whether to use vision AI for enhanced metadata extraction
+        """
+        self.use_vision = use_vision and HAS_VISION
+        if self.use_vision:
+            self.vision_analyzer = VisionAnalyzer()
+    
+    def extract(self, file_path: str) -> Dict[str, Any]:
         """
         Extract metadata from a file
         
@@ -57,11 +73,75 @@ class MetadataExtractor:
         ext = metadata['ext']
         
         if ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
-            metadata.update(MetadataExtractor._extract_image_metadata(file_path))
+            metadata.update(self._extract_image_metadata(file_path))
         elif ext in ['mp3', 'wav', 'flac', 'm4a', 'aac', 'ogg']:
-            metadata.update(MetadataExtractor._extract_audio_metadata(file_path))
+            metadata.update(self._extract_audio_metadata(file_path))
+        elif ext in ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm']:
+            metadata.update(self._extract_video_metadata(file_path))
         elif ext == 'pdf':
-            metadata.update(MetadataExtractor._extract_pdf_metadata(file_path))
+            metadata.update(self._extract_pdf_metadata(file_path))
+        
+        # Use vision AI for enhanced metadata extraction if enabled
+        if self.use_vision:
+            vision_metadata = self._extract_vision_metadata(file_path, ext)
+            # Vision metadata takes precedence but doesn't override existing non-empty values
+            for key, value in vision_metadata.items():
+                if value and (key not in metadata or not metadata.get(key)):
+                    metadata[key] = value
+        
+        return metadata
+    
+    def _extract_vision_metadata(self, file_path: str, ext: str) -> Dict[str, Any]:
+        """
+        Extract metadata using vision AI
+        
+        Args:
+            file_path: Path to the file
+            ext: File extension
+            
+        Returns:
+            Dictionary with vision-extracted metadata
+        """
+        # Only analyze images and videos
+        if ext not in ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp',
+                       'mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm']:
+            return {}
+        
+        try:
+            return self.vision_analyzer.analyze_media(file_path)
+        except Exception:
+            return {}
+    
+    @staticmethod
+    def _extract_video_metadata(file_path: str) -> Dict[str, Any]:
+        """Extract metadata from video files"""
+        metadata = {}
+        
+        # Try to extract video metadata using mutagen (works for some video formats)
+        if HAS_MUTAGEN:
+            try:
+                video = MutagenFile(file_path)
+                if video is not None:
+                    # Extract audio track metadata if present
+                    if hasattr(video, 'tags') and video.tags:
+                        tags = video.tags
+                        
+                        # Try different tag formats
+                        for title_tag in ['TIT2', 'title', '\xa9nam', 'Title']:
+                            if title_tag in tags:
+                                metadata['title'] = str(tags[title_tag])
+                                break
+                        
+                        for artist_tag in ['TPE1', 'artist', '\xa9ART', 'Artist']:
+                            if artist_tag in tags:
+                                metadata['artist'] = str(tags[artist_tag])
+                                break
+                    
+                    # Duration
+                    if hasattr(video, 'info') and hasattr(video.info, 'length'):
+                        metadata['duration'] = int(video.info.length)
+            except Exception:
+                pass
         
         return metadata
     

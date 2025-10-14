@@ -20,7 +20,9 @@ class FileManager:
             config: ConfigManager instance
         """
         self.config = config
-        self.metadata_extractor = MetadataExtractor()
+        # Check if vision should be enabled
+        use_vision = config.get('vision_enabled', True)
+        self.metadata_extractor = MetadataExtractor(use_vision=use_vision)
     
     def get_file_type(self, file_path: str) -> str:
         """
@@ -58,15 +60,114 @@ class FileManager:
         patterns = self.config.get('naming_patterns', {})
         pattern = patterns.get(file_type, patterns.get('default', '{filename}.{ext}'))
         
+        # For music and video files, use intelligent naming
+        if file_type in ['music', 'videos']:
+            pattern = self._get_intelligent_pattern(metadata, file_type)
+        
         # Replace placeholders with metadata
         try:
-            new_name = pattern.format(**metadata)
+            # Prepare metadata with safe defaults
+            safe_metadata = self._prepare_metadata_for_formatting(metadata)
+            new_name = pattern.format(**safe_metadata)
             # Clean up invalid filename characters
             new_name = self._sanitize_filename(new_name)
             return new_name
-        except KeyError:
+        except (KeyError, ValueError):
             # If metadata is missing, fall back to original filename
             return Path(file_path).name
+    
+    def _get_intelligent_pattern(self, metadata: Dict, file_type: str) -> str:
+        """
+        Generate intelligent naming pattern based on metadata
+        
+        Args:
+            metadata: File metadata
+            file_type: Type of the file
+            
+        Returns:
+            Naming pattern string
+        """
+        # Check if we have artist and title
+        has_artist = metadata.get('artist')
+        has_title = metadata.get('title')
+        
+        if file_type == 'music':
+            if has_artist and has_title:
+                # Pattern: Artist(s) - Song Title (Clean or Explicit) (Remix Description)
+                pattern = "{artist} - {title}"
+                
+                # Add content rating if available
+                if metadata.get('content_rating'):
+                    pattern += " ({content_rating})"
+                
+                # Add remix or version info if available
+                if metadata.get('version'):
+                    pattern += " ({version})"
+                
+                pattern += ".{ext}"
+                return pattern
+        
+        elif file_type == 'videos':
+            # Check if it's a music-related video
+            content_type = metadata.get('video_type', '').lower()
+            
+            if has_artist and has_title:
+                # Pattern: Artist - Title (Clean/Explicit) (Video Type)
+                pattern = "{artist} - {title}"
+                
+                # Add content rating if available
+                if metadata.get('content_rating'):
+                    pattern += " ({content_rating})"
+                
+                # Add video type (Music Video, Karaoke, etc.)
+                if metadata.get('video_type'):
+                    pattern += " ({video_type})"
+                
+                pattern += ".{ext}"
+                return pattern
+            elif has_title:
+                # Just title with video type
+                pattern = "{title}"
+                
+                if metadata.get('video_type'):
+                    pattern += " ({video_type})"
+                
+                pattern += ".{ext}"
+                return pattern
+        
+        # Fall back to configured pattern
+        patterns = self.config.get('naming_patterns', {})
+        return patterns.get(file_type, patterns.get('default', '{filename}.{ext}'))
+    
+    def _prepare_metadata_for_formatting(self, metadata: Dict) -> Dict:
+        """
+        Prepare metadata dictionary for string formatting by providing safe defaults
+        
+        Args:
+            metadata: Raw metadata dictionary
+            
+        Returns:
+            Metadata with safe defaults for all placeholders
+        """
+        safe_metadata = metadata.copy()
+        
+        # Ensure all common placeholders have values
+        defaults = {
+            'artist': '',
+            'title': '',
+            'album': '',
+            'year': '',
+            'content_rating': '',
+            'video_type': '',
+            'version': '',
+            'description': '',
+        }
+        
+        for key, default_value in defaults.items():
+            if key not in safe_metadata or safe_metadata[key] is None:
+                safe_metadata[key] = default_value
+        
+        return safe_metadata
     
     def _sanitize_filename(self, filename: str) -> str:
         """

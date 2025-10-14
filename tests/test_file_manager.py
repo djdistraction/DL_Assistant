@@ -125,6 +125,87 @@ class TestFileManager(unittest.TestCase):
         duplicates = self.file_manager.find_duplicates(duplicate, search_dir)
         self.assertEqual(len(duplicates), 1)
         self.assertEqual(duplicates[0], original)
+    
+    def test_get_intelligent_pattern_music(self):
+        """Test intelligent pattern generation for music files"""
+        metadata = {
+            'artist': 'Test Artist',
+            'title': 'Test Song',
+            'content_rating': 'Explicit',
+            'ext': 'mp3',
+            'filename': 'test'
+        }
+        
+        pattern = self.file_manager._get_intelligent_pattern(metadata, 'music')
+        
+        # Should include artist, title, and content rating
+        self.assertIn('{artist}', pattern)
+        self.assertIn('{title}', pattern)
+        self.assertIn('{content_rating}', pattern)
+    
+    def test_get_intelligent_pattern_video(self):
+        """Test intelligent pattern generation for video files"""
+        metadata = {
+            'artist': 'Test Artist',
+            'title': 'Test Song',
+            'content_rating': 'Clean',
+            'video_type': 'Karaoke',
+            'ext': 'mp4',
+            'filename': 'test'
+        }
+        
+        pattern = self.file_manager._get_intelligent_pattern(metadata, 'videos')
+        
+        # Should include artist, title, content rating, and video type
+        self.assertIn('{artist}', pattern)
+        self.assertIn('{title}', pattern)
+        self.assertIn('{content_rating}', pattern)
+        self.assertIn('{video_type}', pattern)
+    
+    def test_prepare_metadata_for_formatting(self):
+        """Test metadata preparation with safe defaults"""
+        metadata = {
+            'filename': 'test',
+            'ext': 'mp3',
+            'artist': 'Test Artist'
+        }
+        
+        safe_metadata = self.file_manager._prepare_metadata_for_formatting(metadata)
+        
+        # Should have all required fields
+        self.assertEqual(safe_metadata['artist'], 'Test Artist')
+        self.assertEqual(safe_metadata['title'], '')  # Default empty string
+        self.assertEqual(safe_metadata['content_rating'], '')
+        self.assertEqual(safe_metadata['video_type'], '')
+    
+    def test_generate_filename_with_artist_title(self):
+        """Test filename generation with artist and title"""
+        # Create a test file
+        test_file = os.path.join(self.test_dir, 'test.mp3')
+        with open(test_file, 'w') as f:
+            f.write('test audio content')
+        
+        # Mock metadata extraction to return artist and title
+        original_extract = self.file_manager.metadata_extractor.extract
+        
+        def mock_extract(file_path):
+            metadata = original_extract(file_path)
+            metadata.update({
+                'artist': 'Test Artist',
+                'title': 'Test Song',
+                'content_rating': 'Clean'
+            })
+            return metadata
+        
+        self.file_manager.metadata_extractor.extract = mock_extract
+        
+        # Generate filename
+        new_name = self.file_manager.generate_new_filename(test_file, 'music')
+        
+        # Should follow intelligent pattern
+        self.assertIn('Test Artist', new_name)
+        self.assertIn('Test Song', new_name)
+        self.assertIn('Clean', new_name)
 
 
 if __name__ == '__main__':
