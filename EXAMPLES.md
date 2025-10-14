@@ -193,7 +193,7 @@ DL_Assistant automatically classifies files by extension:
 
 - **Images**: jpg, jpeg, png, gif, bmp, svg, webp
 - **Documents**: pdf, doc, docx, txt, rtf, odt, xls, xlsx, ppt, pptx
-- **Music**: mp3, wav, flac, m4a, aac, ogg, wma
+- **Music**: mp3, wav, wave, flac, m4a, aac, ogg, wma
 - **Videos**: mp4, avi, mkv, mov, wmv, flv, webm
 - **Archives**: zip, rar, tar, gz, 7z
 

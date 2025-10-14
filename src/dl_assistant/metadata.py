@@ -74,7 +74,7 @@ class MetadataExtractor:
         
         if ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
             metadata.update(self._extract_image_metadata(file_path))
-        elif ext in ['mp3', 'wav', 'flac', 'm4a', 'aac', 'ogg']:
+        elif ext in ['mp3', 'wav', 'wave', 'flac', 'm4a', 'aac', 'ogg']:
             metadata.update(self._extract_audio_metadata(file_path))
         elif ext in ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm']:
             metadata.update(self._extract_video_metadata(file_path))
