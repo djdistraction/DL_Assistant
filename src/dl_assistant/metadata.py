@@ -73,13 +73,13 @@ class MetadataExtractor:
         ext = metadata['ext']
         
         if ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
-            metadata.update(MetadataExtractor._extract_image_metadata(file_path))
+            metadata.update(self._extract_image_metadata(file_path))
         elif ext in ['mp3', 'wav', 'flac', 'm4a', 'aac', 'ogg']:
-            metadata.update(MetadataExtractor._extract_audio_metadata(file_path))
+            metadata.update(self._extract_audio_metadata(file_path))
         elif ext in ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm']:
-            metadata.update(MetadataExtractor._extract_video_metadata(file_path))
+            metadata.update(self._extract_video_metadata(file_path))
         elif ext == 'pdf':
-            metadata.update(MetadataExtractor._extract_pdf_metadata(file_path))
+            metadata.update(self._extract_pdf_metadata(file_path))
         
         # Use vision AI for enhanced metadata extraction if enabled
         if self.use_vision:
