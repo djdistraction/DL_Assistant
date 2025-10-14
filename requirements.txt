@@ -1,0 +1,7 @@
+watchdog==3.0.0
+flask==3.0.0
+PyYAML==6.0.1
+Pillow==10.1.0
+mutagen==1.47.0
+PyPDF2==3.0.1
+python-magic==0.4.27

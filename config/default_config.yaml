@@ -1,0 +1,90 @@
+# Default configuration for DL_Assistant
+# This file contains default values. User-specific configuration will be stored in user_config.json
+
+# Folder paths
+downloads_folder: "~/Downloads"
+quarantine_folder: "~/Downloads/Quarantine"
+
+# File naming patterns
+# Available placeholders: {date}, {time}, {title}, {artist}, {album}, {year}, {filename}, {ext}
+naming_patterns:
+  images: "{date}_{filename}.{ext}"
+  documents: "{date}_{title}.{ext}"
+  music: "{artist} - {title}.{ext}"
+  videos: "{date}_{title}.{ext}"
+  default: "{date}_{filename}.{ext}"
+
+# Destination folders by file type
+destinations:
+  images:
+    - "~/Pictures"
+  documents:
+    - "~/Documents"
+  music:
+    - "~/Music"
+  videos:
+    - "~/Videos"
+  archives:
+    - "~/Downloads/Archives"
+
+# File type classifications (by extension)
+file_types:
+  images:
+    - jpg
+    - jpeg
+    - png
+    - gif
+    - bmp
+    - svg
+    - webp
+  documents:
+    - pdf
+    - doc
+    - docx
+    - txt
+    - rtf
+    - odt
+    - xls
+    - xlsx
+    - ppt
+    - pptx
+  music:
+    - mp3
+    - wav
+    - flac
+    - m4a
+    - aac
+    - ogg
+    - wma
+  videos:
+    - mp4
+    - avi
+    - mkv
+    - mov
+    - wmv
+    - flv
+    - webm
+  archives:
+    - zip
+    - rar
+    - tar
+    - gz
+    - 7z
+
+# Duplicate detection
+duplicate_detection:
+  enabled: true
+  compare_method: "hash"  # hash, size, or both
+  keep_newest: true
+
+# Monitoring settings
+monitoring:
+  enabled: true
+  check_interval: 5  # seconds
+  ignore_hidden: true
+  ignore_temp: true
+
+# Quarantine settings
+quarantine:
+  enabled: true
+  require_user_action: true
