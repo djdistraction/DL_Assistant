@@ -2,6 +2,61 @@
 
 This file contains examples of how to use DL_Assistant.
 
+## Quick Start: Complete Workflow
+
+Here's a complete workflow showing how DL_Assistant intelligently organizes your downloads:
+
+### Setup
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# (Optional) Enable AI Vision features
+export OPENAI_API_KEY='your-api-key-here'
+
+# Start monitoring
+dl-assistant
+```
+
+### What Happens to Your Downloads
+
+**Scenario 1: Music Video Download**
+```
+Downloaded: "video_20241015_193042.mp4"
+↓ Vision AI analyzes video frame
+↓ Detects: Music Video, Artist: "Papa Roach", Title: "Last Resort", Rating: Clean
+Renamed: "Papa Roach - Last Resort (Clean) (Music Video).mp4"
+Moved to: ~/Videos/
+```
+
+**Scenario 2: Karaoke Video**
+```
+Downloaded: "guilty_conscience_kar.mp4"
+↓ Vision AI detects karaoke-style lyrics on screen
+↓ Extracts: Artist: "Eminem", Title: "Guilty Conscience", Rating: Explicit
+Renamed: "Eminem - Guilty Conscience (Explicit) (Karaoke).mp4"
+Moved to: ~/Videos/
+```
+
+**Scenario 3: Music File with ID3 Tags**
+```
+Downloaded: "track01.mp3"
+↓ Reads ID3 tags from file
+↓ Found: Artist: "Test Artist", Title: "Test Song"
+Renamed: "Test Artist - Test Song.mp3"
+Moved to: ~/Music/
+```
+
+**Scenario 4: Music File without Tags**
+```
+Downloaded: "unknown_track.mp3"
+↓ No ID3 tags found
+↓ Vision AI analyzes embedded album art
+↓ Extracts artist and title from album art
+Renamed: "Artist Name - Song Title (Clean).mp3"
+Moved to: ~/Music/
+```
+
 ## Example 1: Basic Monitoring
 
 Start monitoring with default settings:
