@@ -202,11 +202,17 @@ duplicate_detection:
 
 1. **File Detection**: The watchdog library monitors your downloads folder for new files
 2. **Metadata Extraction**: Reads metadata using appropriate libraries (PIL for images, mutagen for audio, PyPDF2 for PDFs)
-3. **Type Classification**: Determines file type based on extension
-4. **Duplicate Check**: Compares with existing files in destination folders
-5. **Renaming**: Generates new filename based on metadata and naming patterns
-6. **Relocation**: Moves file to appropriate destination folder
-7. **Quarantine**: If destination is unclear, moves to quarantine folder for manual review
+3. **AI Vision Analysis** (Optional): If enabled, uses OpenAI's vision API to:
+   - Analyze images and video frames for artist/title information
+   - Detect video content types (Music Video, Karaoke, Lyric Video, etc.)
+   - Identify explicit content and mark as Clean or Explicit
+4. **Type Classification**: Determines file type based on extension
+5. **Intelligent Naming**: For music and videos with artist/title metadata:
+   - Music: `Artist(s) - Song Title (Clean/Explicit).ext`
+   - Videos: `Artist - Title (Clean/Explicit) (Video Type).ext`
+6. **Duplicate Check**: Compares with existing files in destination folders
+7. **Relocation**: Moves file to appropriate destination folder
+8. **Quarantine**: If destination is unclear, moves to quarantine folder for manual review
 
 ## Project Structure
 
@@ -218,6 +224,7 @@ DL_Assistant/
 │       ├── main.py              # Entry point
 │       ├── config.py            # Configuration management
 │       ├── metadata.py          # Metadata extraction
+│       ├── vision.py            # AI vision analysis
 │       ├── file_manager.py      # File operations
 │       ├── watcher.py           # File monitoring
 │       ├── dashboard.py         # Web dashboard
@@ -228,7 +235,8 @@ DL_Assistant/
 ├── tests/
 │   ├── test_config.py
 │   ├── test_file_manager.py
-│   └── test_metadata.py
+│   ├── test_metadata.py
+│   └── test_vision.py
 ├── requirements.txt
 ├── setup.py
 └── README.md
@@ -248,6 +256,7 @@ python -m unittest tests.test_config
 
 ## Dependencies
 
+### Required
 - **watchdog**: File system monitoring
 - **flask**: Web dashboard
 - **PyYAML**: Configuration management
@@ -255,6 +264,12 @@ python -m unittest tests.test_config
 - **mutagen**: Audio metadata extraction
 - **PyPDF2**: PDF metadata extraction
 - **python-magic**: File type detection
+
+### Optional (for AI Vision Features)
+- **openai**: OpenAI API client for vision analysis
+- **opencv-python**: Video frame extraction for vision analysis
+
+**Note**: Vision features require an OpenAI API key. Without it, the assistant will work with basic metadata extraction only.
 
 ## Contributing
 

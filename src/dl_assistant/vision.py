@@ -9,7 +9,7 @@ from typing import Dict, Any, Optional
 import json
 
 try:
-    import openai
+    from openai import OpenAI
     HAS_OPENAI = True
 except ImportError:
     HAS_OPENAI = False
@@ -27,8 +27,9 @@ class VisionAnalyzer:
     def __init__(self):
         """Initialize vision analyzer"""
         self.api_key = os.environ.get('OPENAI_API_KEY')
+        self.client = None
         if self.api_key and HAS_OPENAI:
-            openai.api_key = self.api_key
+            self.client = OpenAI(api_key=self.api_key)
     
     def analyze_media(self, file_path: str) -> Dict[str, Any]:
         """
@@ -40,7 +41,7 @@ class VisionAnalyzer:
         Returns:
             Dictionary containing analysis results
         """
-        if not self.api_key or not HAS_OPENAI:
+        if not self.client:
             return {}
         
         ext = Path(file_path).suffix.lower().lstrip('.')
@@ -69,7 +70,7 @@ class VisionAnalyzer:
                 image_data = base64.b64encode(f.read()).decode('utf-8')
             
             # Call OpenAI Vision API
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
                     {
@@ -156,7 +157,7 @@ class VisionAnalyzer:
                     image_data = base64.b64encode(f.read()).decode('utf-8')
                 
                 # Call OpenAI Vision API with video-specific prompt
-                response = openai.ChatCompletion.create(
+                response = self.client.chat.completions.create(
                     model="gpt-4o",
                     messages=[
                         {
