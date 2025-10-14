@@ -181,6 +181,7 @@ file_types:
   music:
     - mp3
     - wav
+    - wave
     - flac
   videos:
     - mp4

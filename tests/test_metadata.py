@@ -45,7 +45,7 @@ class TestMetadataExtractor(unittest.TestCase):
     
     def test_extract_from_different_extensions(self):
         """Test metadata extraction from various file types"""
-        extensions = ['txt', 'jpg', 'pdf', 'mp3']
+        extensions = ['txt', 'jpg', 'pdf', 'mp3', 'wave']
         
         for ext in extensions:
             test_file = os.path.join(self.test_dir, f'test.{ext}')
