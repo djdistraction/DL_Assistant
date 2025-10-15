@@ -17,7 +17,7 @@ An intelligent assistant that monitors your system downloads folder, reads meta-
   - Music files: `Artist(s) - Song Title (Clean/Explicit) (Remix Description).ext`
   - Video files: `Artist - Title (Clean/Explicit) (Video Type).ext`
 - **Video Content Recognition**: Automatically identifies video types:
-  - Music Video, Karaoke, Lyric Video, Background Video, Slideshow, Concert, Performance, etc.
+  - Music Video, Karaoke, Lyric Video, Background Video, Background FX Video, Slideshow, Concert, Performance, etc.
 - **Content Rating Detection**: Identifies explicit content and marks files as Clean or Explicit
 - **Duplicate Detection**: Identifies and removes duplicate files using hash comparison
 - **Intelligent Organization**: Automatically moves files to appropriate destination folders
