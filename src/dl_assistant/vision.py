@@ -271,7 +271,6 @@ Note: Background FX Video refers to videos with visual effects, animations, or m
             'background fx video': 'Background FX',
             'background fx': 'Background FX',
             'backgroundfx': 'Background FX',
-            'fx video': 'Background FX',
             'slideshow': 'Slideshow',
             'concert': 'Concert',
             'performance': 'Performance',
