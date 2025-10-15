@@ -20,12 +20,45 @@ An intelligent assistant that monitors your system downloads folder, reads meta-
 
 ## Installation
 
-### Prerequisites
+### Quick Install (Recommended)
+
+**One-Click Installer** - The easiest way to get started! The installer will:
+- Install DL_Assistant and all dependencies
+- Automatically open the configuration dashboard
+- Guide you through initial setup
+
+**For Linux/Unix/MacOS:**
+```bash
+git clone https://github.com/djdistraction/DL_Assistant.git
+cd DL_Assistant
+./install.sh
+```
+
+**For Windows:**
+```batch
+git clone https://github.com/djdistraction/DL_Assistant.git
+cd DL_Assistant
+install.bat
+```
+
+After installation, the dashboard will open automatically at http://127.0.0.1:5000, where you can:
+- Configure your downloads and destination folders
+- Set up naming patterns for different file types
+- Configure duplicate detection settings
+- Customize file type classifications
+
+Once configured, close the dashboard (Ctrl+C) and run `dl-assistant` to start monitoring.
+
+### Manual Installation
+
+If you prefer to install manually:
+
+#### Prerequisites
 
 - Python 3.8 or higher
 - pip (Python package manager)
 
-### Steps
+#### Steps
 
 1. Clone the repository:
 ```bash
@@ -49,6 +82,13 @@ Note: Vision features require an OpenAI API key. Without it, the assistant will 
 ```bash
 pip install -e .
 ```
+
+5. Start the dashboard for initial configuration:
+```bash
+dl-assistant --mode dashboard
+```
+
+Open http://127.0.0.1:5000 in your browser to configure your preferences.
 
 ## Usage
 
