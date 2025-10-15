@@ -170,12 +170,13 @@ class VisionAnalyzer:
   "description": "Brief description of what's in the video",
   "artist": "Artist/performer name if visible (or null)",
   "title": "Song/video title if visible (or null)",
-  "content_type": "One of: Music Video, Karaoke, Lyric Video, Background Video, Slideshow, Concert, Performance, Tutorial, Other",
+  "content_type": "One of: Music Video, Karaoke, Lyric Video, Background Video, Background FX Video, Slideshow, Concert, Performance, Tutorial, Other",
   "is_explicit": false or true if explicit content/language visible,
   "video_category": "More specific category if applicable"
 }
 
-Look for text, artist names, song titles, karaoke-style lyrics, or music video characteristics."""
+Look for text, artist names, song titles, karaoke-style lyrics, or music video characteristics.
+Note: Background FX Video refers to videos with visual effects, animations, or motion graphics typically used as background content."""
                                 },
                                 {
                                     "type": "image_url",
@@ -267,6 +268,10 @@ Look for text, artist names, song titles, karaoke-style lyrics, or music video c
             'lyric video': 'Lyric Video',
             'lyrics video': 'Lyric Video',
             'background video': 'Background Video',
+            'background fx video': 'Background FX',
+            'background fx': 'Background FX',
+            'backgroundfx': 'Background FX',
+            'fx video': 'Background FX',
             'slideshow': 'Slideshow',
             'concert': 'Concert',
             'performance': 'Performance',
